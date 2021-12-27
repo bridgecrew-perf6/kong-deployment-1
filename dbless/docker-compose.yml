@@ -1,0 +1,34 @@
+##
+# Docker Compose based on Install and Run Kong in Docker
+# https://docs.konghq.com/gateway/2.7.x/install-and-run/docker/
+
+version: '3.9'
+services:
+  kong:
+    platform: linux/amd64
+    container_name: kong
+    image: kong:latest
+    restart: always
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+    volumes:
+      - /etc/localtime:/etc/localtime:ro   
+      - ./config:/usr/local/kong/declarative
+    ports:
+      - "127.0.0.1:8001:8001/tcp"
+      - "127.0.0.1:8444:8444/tcp"
+      - 8000:8000
+      - 8443:8443
+
+volumes:
+  kong-vol: 
+
+networks:
+  kong-net:
+    external: false
